@@ -43,11 +43,13 @@ if (empty($hooks)) {
     SlackResponse::getInstance()->unauthorizedRequest();
 }
 
+// try all found hooks for a suitable response
 $response = null;
 foreach ($hooks as $hook) {
     $response = $hook->process($trigger, $text);
     
     if ($response !== null) {
+        // stop processing hooks after we have a single match
         break;
     }
 }
@@ -59,4 +61,3 @@ if ($response === null) {
 
 // annnnd we're done =]
 SlackResponse::getInstance()->respond($response);
-
