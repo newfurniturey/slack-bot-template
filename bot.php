@@ -18,9 +18,10 @@ if (!$request->isValidRequest()) {
     SlackResponse::getInstance()->invalidRequest();
 }
 
-// get our beloved token & trigger
+// get our beloved token, trigger and text
 $token = $request->getParam(SlackRequest::REQUEST_TOKEN);
 $trigger = $request->getParam(SlackRequest::REQUEST_TRIGGER);
+$text = $request->getParam(SlackRequest::REQUEST_TEXT);
 
 // load any registered hooks for this trigger
 $tmpHooks = BotHooks::getInstance()->getHooksByTrigger($trigger);
@@ -41,4 +42,21 @@ unset($tmpHooks);
 if (empty($hooks)) {
     SlackResponse::getInstance()->unauthorizedRequest();
 }
+
+$response = null;
+foreach ($hooks as $hook) {
+    $response = $hook->process($trigger, $text);
+    
+    if ($response !== null) {
+        break;
+    }
+}
+
+if ($response === null) {
+    // well boo; no hook matched the given input
+    $response = 'Request format not recognized.';
+}
+
+// annnnd we're done =]
+SlackResponse::getInstance()->respond($response);
 
