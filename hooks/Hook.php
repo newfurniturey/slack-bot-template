@@ -42,4 +42,12 @@ abstract class Hook {
         return $this->triggers;
     }
     
+    /**
+     * Processes the input text and returns the response for Slack.
+     *
+     * @param String $trigger
+     * @param String $text
+     * @return String
+     */
+    abstract public function process($trigger, $text);
 }
