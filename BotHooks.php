@@ -80,8 +80,10 @@ class BotHooks {
         
         $hookFiles = glob(BotHooks::HOOK_DIR . '/[A-Z][a-z]*Hook.php');
         foreach ($hookFiles as $hookFile) {
+            // include the file
             require_once $hookFile;
             
+            // load a class that has the same name as the file
             $fileName = substr($hookFile, strrpos($hookFile, '/') + 1);
             $className = 'Slackbot\\Hooks\\' . substr($fileName, 0, strlen($fileName) - 4);
             $hookInstance = new $className();
@@ -94,14 +96,23 @@ class BotHooks {
             $this->hooks[] = $hookInstance;
             
             // process the triggers supported by the hook
-            $triggers = $hookInstance->getTriggers();
-            foreach ($triggers as $trigger) {
-                if (!isset($this->triggers[$trigger])) {
-                    $this->triggers[$trigger] = array();
-                }
-                
-                $this->triggers[$trigger][] = $hookInstance;
+            $this->loadHookTriggers($hookInstance);
+        }
+    }
+    
+    /**
+     * Generate a trigger-to-hook map for the given hook and each of it's supported triggers.
+     *
+     * @param \Slackbot\Hooks\Hook $hook
+     */
+    private function loadHookTriggers(\Slackbot\Hooks\Hook $hook) {
+        $triggers = $hook->getTriggers();
+        foreach ($triggers as $trigger) {
+            if (!isset($this->triggers[$trigger])) {
+                $this->triggers[$trigger] = array();
             }
+            
+            $this->triggers[$trigger][] = $hook;
         }
     }
 }
