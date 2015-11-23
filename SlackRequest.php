@@ -53,7 +53,7 @@ class SlackRequest {
      * @return string|array
      */
     public function getParam($param) {
-        return isset($requestParams[$param]) ? $requestParams[$param] : null;
+        return isset($this->requestParams[$param]) ? $this->requestParams[$param] : null;
     }
     
     /**
