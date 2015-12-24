@@ -6,12 +6,10 @@ require_once 'Hook.php';
 class SampleHook extends Hook {
     
     /**
-     * List of supported tokens.
-     * @type Array
+     * The declared name of this hook.
+	 * @type String
      */
-    protected $tokens = array(
-        'abcd1234dcba'
-    );
+    protected $name = 'SampleHook';
     
     /**
      * List of supported triggers. (to be populated by subclasses)
